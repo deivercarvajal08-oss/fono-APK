@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fono Te Ayuda | Interfaz Avanzada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Roboto:wght@400,700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variables de Color: Estética Cyber-Tech */
+        :root {
+            --color-primary: #00e0ff; /* Cian Brillante (Énfasis) */
+            --color-secondary: #00aaff; /* Azul Eléctrico */
+            --color-background: #081119; /* Negro Profundo de Terminal */
+            --color-card-bg: #1c2a38; /* Fondo de Contenido Secundario */
+            --color-correct: #32ff6e; /* Verde Neón */
+            --color-incorrect: #ff3232; /* Rojo Neón */
+            --color-text: #e0e0e0; /* Gris Claro Digital */
+            --color-next-btn: #FF9800; 
+            --color-next-shadow: #e65100; 
+            --color-selection: #ffdd33; /* Amarillo para pre-selección */
+        }
+
+        /* --- CUERPO Y FONDO ÚNICO: CUADRÍCULA DIGITAL --- */
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background: var(--color-background); 
+            color: var(--color-text); 
+            text-align: center; 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Fondo con patrón de cuadrícula sutil */
+            background-image: linear-gradient(0deg, transparent 95%, rgba(0,224,255,0.05) 100%),
+                              linear-gradient(90deg, transparent 95%, rgba(0,224,255,0.05) 100%),
+                              linear-gradient(135deg, #0d1b2a 0%, #081119 100%);
+            background-size: 20px 20px;
+        }
+
+        /* Contenedor principal: Marco de Terminal */
+        #game-box {
+            background: var(--color-background);
+            border: 2px solid var(--color-primary);
+            border-radius: 5px;
+            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 0 40px rgba(0,224,255,0.4), inset 0 0 10px rgba(0,224,255,0.2);
+            position: relative;
+            animation: terminalPulse 4s infinite ease-in-out alternate;
+        }
+        @keyframes terminalPulse {
+            0% { box-shadow: 0 0 20px var(--color-primary), inset 0 0 5px var(--color-primary); }
+            100% { box-shadow: 0 0 30px var(--color-primary), inset 0 0 10px var(--color-primary); }
+        }
+
+        h1 { 
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-primary); 
+            font-size: 2.5em; 
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--color-primary); /* Efecto de texto digital */
+        }
+        
+        .screen { display: none; }
+        .active { display: block; }
+        
+        /* --- BOTONES MODERNOS: EFECTO DE ELEVACIÓN Y BRILLO --- */
+        button { 
+            color: var(--color-text); 
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-secondary);
+            padding: 15px 25px; 
+            font-size: 1.2em; 
+            margin: 10px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            width: 250px; 
+            transition: all 0.2s ease-out;
+            text-transform: uppercase;
+            font-weight: 700;
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        
+        button:hover { 
+            color: var(--color-primary);
+            background: #25394a;
+            transform: translateY(-3px) scale(1.02); 
+            box-shadow: 0 5px 20px rgba(0,224,255,0.5); /* Sombra brillante */
+        }
+        button:active { transform: translateY(0); }
+        
+        /* Botones de opción: Color base diferente */
+        .option { background: var(--color-card-bg); border-color: #555; }
+        .option:hover { border-color: var(--color-primary); }
+        
+        /* Feedback visual: Selección temporal */
+        .option.selected { 
+            background: var(--color-selection); 
+            color: #000;
+            border-color: var(--color-selection);
+            box-shadow: 0 0 15px var(--color-selection);
+        } 
+
+        /* Feedback visual: Respuesta Correcta (Pulso Neón) */
+        .option.correct-choice {
+            background: var(--color-correct);
+            color: #000;
+            box-shadow: 0 0 25px var(--color-correct);
+            animation: flashSuccess 0.5s ease-out;
+            border-color: var(--color-correct);
+        }
+        @keyframes flashSuccess {
+            0% { transform: scale(1); box-shadow: 0 0 5px var(--color-correct); }
+            50% { transform: scale(1.05); box-shadow: 0 0 35px var(--color-correct); }
+            100% { transform: scale(1); box-shadow: 0 0 25px var(--color-correct); }
+        }
+
+        /* --- INTRODUCCIÓN MEJORADA: TRANSICIONES Y LOGO --- */
+        #intro { perspective: 1000px; }
+        @keyframes fadeInSlide { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Logo: Animación 3D de entrada (Mantenemos la corrección de tamaño) */
+        #intro img { 
+            max-width: 180px; 
+            height: auto;
+            margin-bottom: 25px; 
+            border-radius: 50%; 
+            border: 3px solid var(--color-primary);
+            box-shadow: 0 0 15px rgba(0, 224, 255, 0.7); 
+            opacity: 0;
+            transform: scale(0.5); 
+            animation: logoEnter 1.5s ease-out 1.5s forwards; 
+        }
+        @keyframes logoEnter {
+            0% { opacity: 0; transform: scale(0.5) rotateY(90deg); }
+            100% { opacity: 1; transform: scale(1) rotateY(0deg); }
+        }
+
+        /* Animación para el botón "Empezar Sesión" */
+        #intro button { 
+            background: var(--color-correct); 
+            color: #000;
+            box-shadow: 0 0 10px var(--color-correct);
+            border-color: var(--color-correct);
+            animation: pulse 2s infinite, fadeInSlide 1s ease-out 4s forwards; 
+            opacity: 0;
+        }
+        
+        /* Botón Siguiente Nivel: Naranja Neón */
+        #nextBtn {
+            background: var(--color-next-btn);
+            color: #000;
+            border-color: var(--color-next-btn);
+            box-shadow: 0 0 15px var(--color-next-btn);
+            animation: nextPulse 1.5s infinite; 
+        }
+        @keyframes nextPulse {
+            0% { box-shadow: 0 0 10px var(--color-next-btn); }
+            50% { box-shadow: 0 0 25px var(--color-next-btn); }
+            100% { box-shadow: 0 0 10px var(--color-next-btn); }
+        }
+
+
+        /* --- CONTENEDOR DE MEDIA: TAMAÑO FIJO Y ESTILO DIGITAL --- */
+        #media { 
+            background: var(--color-card-bg); 
+            width: 250px; 
+            height: 250px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin: 20px auto; 
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--color-secondary);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        
+        img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            border-radius: 5px; 
+            padding: 5px; /* Pequeño padding para no tocar el borde del contenedor */
+            box-shadow: none;
+            animation: fadeInScale 0.5s ease-out;
+        }
+        #media span { 
+            font-size: 5em; 
+            text-shadow: 0 0 5px var(--color-primary);
+            animation: fadeInScale 0.5s ease-out; 
+        }
+
+        /* Estilos menores */
+        #progress { font-size: 1.2em; margin-bottom: 15px; font-weight: bold; color: var(--color-primary); border-bottom: 2px solid var(--color-primary); padding-bottom: 5px; text-shadow: 0 0 5px rgba(0,224,255,0.5); }
+        .feedback { font-size: 1.5em; font-weight: bold; margin-top: 15px;}
+        .correct { color: var(--color-correct); text-shadow: 0 0 5px var(--color-correct); }
+        .incorrect { color: var(--color-incorrect); text-shadow: 0 0 5px var(--color-incorrect); }
+        
+        /* Confetti con colores de neón */
+        #confetti-container { z-index: 10; }
+        .confetti { border-radius: 2px !important; }
+
+        #ambient-audio, #game-bgm { display: none; } 
+    </style>
+</head>
+<body>
+    <div id="game-box">
+
+        <audio id="ambient-audio" autoplay loop>
+            <source src="https://assets.mixkit.co/sfx/download/mixkit-small-group-cheering-489.wav" type="audio/wav">
+        </audio>
+
+        <audio id="game-bgm" loop>
+            <source src="https://assets.mixkit.co/sfx/download/mixkit-sci-fi-synth-ambience-773.wav" type="audio/wav">
+        </audio>
+
+        <div id="intro" class="screen active">
+            <img src="https://www.unipamplona.edu.co/unipamplona/portalIG/home_144/recursos/general/29042015/logo_fono.jpg" alt="Logo Universidad de Pamplona">
+
+            <h1>FONOLÓGICA: REHABILITACIÓN ACTIVA</h1>
+            <p style="color: #ccc; font-style: italic;">App para Terapia Fonoaudiológica. Interfaz de entrenamiento digital.</p>
+            <p style="margin-top: 30px; color: #aaa;">Presiona el botón para iniciar tu sesión de práctica.</p>
+            
+            <button onclick="stopAudioAndShowScreen('inicio')">Empezar Sesión</button>
+            <p class="autores" style="margin-top: 20px;">Autores: Dayber Sneider Carvajal, Kevin Alexis Guevara</p>
+        </div>
+
+        <div id="inicio" class="screen">
+            <h1>👋 ¡Bienvenido/a al Módulo!</h1>
+            <p style="font-size: 1.1em; color: var(--color-text);">Prepárate para practicar la denominación de objetos. Tendrás 20 niveles de dificultad progresiva.</p>
+            <div style="background: var(--color-card-bg); color: var(--color-text); padding: 15px; border-radius: 10px; margin: 30px 0; border: 1px dashed var(--color-primary);">
+                <p>Nivel 1-10: **Denominación Visual** (Un clic para elegir)</p>
+                <p>Nivel 11-20: **Denominación Auditiva** (Doble clic para elegir)</p>
+            </div>
+            <button onclick="showScreen('ejercicio'); loadLevel()">Comenzar Nivel 1</button>
+        </div>
+        
+        <div id="instrucciones" class="screen">
+            <h1 style="color: #ff9800;">🔔 ¡ALERTA! CAMBIO DE PROTOCOLO</h1>
+            <div style="background: var(--color-card-bg); color: var(--color-text); padding: 20px; border-radius: 10px; margin: 30px 0; border: 1px dashed #ff9800;">
+                <p style="font-size: 1.1em; margin-bottom: 20px;">**MODO AUDITIVO ACTIVADO.**</p>
+                <p>
+                    **1. Un toque:** para **escuchar** la opción. (Retroalimentación Auditiva)<br>
+                    **2. Doble Clic:** para **ELEGIR** la respuesta correcta. (Selección de Datos)
+                </p>
+            </div>
+            <button onclick="showScreen('ejercicio'); loadLevel()">Entendido, Continuar</button>
+        </div>
+
+        <div id="ejercicio" class="screen">
+            <div id="progress">Nivel 1/20</div>
+            <p id="instruccion" style="font-size: 1.3em; font-weight: bold; color: var(--color-primary);">Lo que veo es:</p>
+            <div id="media"></div>
+            
+            <div id="opcionesContainer">
+                <button class="option" id="op1"></button>
+                <button class="option" id="op2"></button>
+                <button class="option" id="op3"></button>
+            </div>
+            
+            <div id="feedback" class="feedback"></div>
+            
+            <button id="nextBtn" style="display:none;" onclick="nextLevel()">Siguiente Nivel ➡️</button>
+            <button onclick="resetGame(); stopAudioAndShowScreen('inicio')" style="background: #e57373; border-color: #b71c1c; color: #fff; width: 200px; font-size: 1em; box-shadow: none;">Volver a Inicio</button>
+        </div>
+
+        <div id="resultados" class="screen">
+            <div id="confetti-container"></div>
+            <h1 style="color: var(--color-correct);">¡PROTOCOLO FINALIZADO! 🥳</h1>
+            <p id="finalScore" style="font-size: 1.8em; color: var(--color-primary);"></p>
+            <p id="finalMessage" style="font-size: 1.2em;"></p>
+            <button onclick="resetGame(); stopAudioAndShowScreen('inicio')" style="background: var(--color-correct); color: #000; border-color: var(--color-correct);">Jugar Otra Vez</button>
+        </div>
+
+    </div> <script>
+        // --- DATA DE NIVELES ---
+        const niveles = [
+            // Nivel 1-10: Visual
+            { img: "https://5aldia.cl/wp-content/uploads/2018/03/manzana.jpg", opciones: ["Manzana", "Pera", "Naranja"], correcta: "Manzana" },
+            { img: "https://i.ibb.co/nsPcbRXG/desktop-wallpaper-pet-png-transparent-pet-png-animal-dog.jpg", opciones: ["Gato", "Perro", "Pájaro"], correcta: "Perro" },
+            { img: "https://cdn.pixabay.com/photo/2016/11/18/17/46/house-1836070_1280.jpg", opciones: ["Casa", "Auto", "Árbol"], correcta: "Casa" },
+            { img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Stilles_Mineralwasser.jpg/285px-Stilles_Mineralwasser.jpg", opciones: ["Jugo", "Leche", "Agua"], correcta: "Agua" },
+            { img: "https://chequeado.com/wp-content/uploads/2021/01/jumpstory-download20210131-152902.jpg", opciones: ["Luna", "Sol", "Estrella"], correcta: "Sol" },
+            { img: "https://lapiedradesisifo.com/wp-content/uploads/2019/04/800px-Libro_de_los_Ep%C3%ADtomes.jpg", opciones: ["Libro", "Lapiz", "Reloj"], correcta: "Libro" },
+            { img: "https://usaditoscars.com/wp-content/uploads/2021/03/carros-usados-caracas-Chevrolet-Aveo.jpg", opciones: ["Avión", "Bicicleta", "Carro"], correcta: "Carro" },
+            { img: "https://traveler.marriott.com/es/wp-content/uploads/sites/2/2018/01/ColombianFood_Paisa.jpg", opciones: ["Comida", "Bebida", "León"], correcta: "Comida" },
+            { img: "https://www.lysaflores.com/blog/wp-content/uploads/2017/07/rose-2442335_960_720.jpg", opciones: ["Fruta", "Flor", "Árbol"], correcta: "Flor" },
+            { img: "https://media.fashionnetwork.com/cdn-cgi/image/fit=contain,width=1000,height=1000,format=auto/m/6190/81b1/9e91/2b90/0e67/9a07/cb54/380f/d84c/cef8/cef8.jpg", opciones: ["Zapato", "Camisa", "Sombrero"], correcta: "Zapato" },
+            // Nivel 11-20: Auditivo/Compuesto
+            { opciones: ["Manzana Roja", "Pera Verde", "Naranja Amarilla"], correcta: "Manzana Roja", emoji: "🍎" },
+            { opciones: ["Perro Grande", "Gato Pequeño", "Pájaro Azul"], correcta: "Perro Grande", emoji: "🐕" },
+            { opciones: ["Casa Blanca", "Auto Rojo", "Árbol Alto"], correcta: "Casa Blanca", emoji: "🏠" },
+            { opciones: ["Agua Fría", "Leche Caliente", "Jugo Dulce"], correcta: "Agua Fría", emoji: "💧" },
+            { opciones: ["Sol Brillante", "Luna Llena", "Estrella Fugaz"], correcta: "Sol Brillante", emoji: "☀️" },
+            { opciones: ["Libro Abierto", "Cuaderno Cerrado", "Revista Nueva"], correcta: "Libro Abierto", emoji: "📖" },
+            { opciones: ["Coche Rápido", "Bicicleta Lenta", "Avión Alto"], correcta: "Coche Rápido", emoji: "🚗" },
+            { opciones: ["Comida Caliente", "Bebida Fría", "Postre Dulce"], correcta: "Comida Caliente", emoji: "🍲" },
+            { opciones: ["Flor Bonita", "Planta Verde", "Árbol Grande"], correcta: "Flor Bonita", emoji: "🌸" },
+            { opciones: ["Zapato Nuevo", "Calcetín Viejo", "Sombrero Rojo"], correcta: "Zapato Nuevo", emoji: "👟" }
+        ];
+
+        let currentLevel = 0;
+        let puntuacion = 0;
+        let instruccionesMostradas = false;
+        const totalNiveles = niveles.length;
+
+        // --- REFERENCIAS DOM Y UTILIDADES ---
+        const mediaDiv = document.getElementById('media');
+        const instruccionP = document.getElementById('instruccion');
+        const opButtons = [document.getElementById('op1'), document.getElementById('op2'), document.getElementById('op3')];
+        const feedbackDiv = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressDiv = document.getElementById('progress');
+        const introAudio = document.getElementById('ambient-audio');
+        const gameBGM = document.getElementById('game-bgm');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // --- CONTROL DE AUDIO Y VOZ ---
+
+        function startBGM() {
+            if (gameBGM && gameBGM.paused) {
+                gameBGM.volume = 0.4; 
+                gameBGM.play().catch(e => console.error("Error al reproducir BGM:", e));
+            }
+        }
+        function stopBGM() {
+            if (gameBGM) {
+                gameBGM.pause();
+                gameBGM.currentTime = 0;
+            }
+        }
+        
+        function stopAudioAndShowScreen(id) {
+            window.speechSynthesis.cancel(); 
+            if (introAudio) {
+                introAudio.pause();
+                introAudio.currentTime = 0;
+            }
+            stopBGM(); 
+            showScreen(id);
+            if (id === 'inicio') {
+                 speak('Bienvenido a fono te ayuda. Presiona comenzar para iniciar la práctica.');
+            }
+        }
+
+        function showScreen(id) { 
+            window.speechSynthesis.cancel(); 
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+            document.getElementById(id).classList.add('active'); 
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.8; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // --- LÓGICA DEL JUEGO ---
+
+        function loadLevel() {
+            if (currentLevel >= totalNiveles) { 
+                showResults(); 
+                return; 
+            }
+
+            if (currentLevel === 10 && !instruccionesMostradas) {
+                instruccionesMostradas = true;
+                showScreen('instrucciones');
+                speak('Atención, el modo de juego ha cambiado a denominación auditiva. En esta sesión, debe tocar una vez para escuchar la opción y doble clic para elegir la respuesta correcta. ¡Concentración!');
+                return;
+            }
+            
+            startBGM(); 
+
+            const level = niveles[currentLevel];
+            shuffleArray(level.opciones);
+            
+            opButtons.forEach(btn => {
+                btn.onclick = null;
+                btn.ondblclick = null;
+                btn.classList.remove('correct-choice', 'selected', 'shake');
+            });
+            feedbackDiv.innerHTML = '';
+            nextBtn.style.display = 'none';
+
+            if (currentLevel < 10) {
+                // Modo Visual
+                mediaDiv.innerHTML = `<img src="${level.img}" alt="Imagen a nombrar">`;
+                instruccionP.textContent = "Lo que veo es:";
+                speak("¿Qué es lo que ves?"); 
+
+                opButtons.forEach((btn, index) => {
+                    btn.textContent = level.opciones[index];
+                    btn.onclick = () => checkAnswer(btn.textContent, btn); 
+                });
+
+            } else {
+                // Modo Auditivo/Compuesto
+                mediaDiv.innerHTML = `<span style="font-size: 5em;">${level.emoji}</span>`;
+                instruccionP.textContent = "Lo que escucho es (toca para repetir la opción):";
+                speak(level.correcta); 
+
+                opButtons.forEach((btn, index) => {
+                    btn.textContent = level.opciones[index];
+                    btn.onclick = () => {
+                        opButtons.forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected'); 
+                        speak(btn.textContent);
+                    };
+                    btn.ondblclick = () => checkAnswer(btn.textContent, btn);
+                });
+            }
+            
+            progressDiv.textContent = `Nivel ${currentLevel + 1}/${totalNiveles}`;
+            showScreen('ejercicio'); 
+        }
+
+        function checkAnswer(selected, buttonElement) {
+            const nivelActual = niveles[currentLevel];
+            
+            if (nextBtn.style.display === 'inline') return;
+
+            opButtons.forEach(btn => btn.classList.remove('selected'));
+
+            if (selected === nivelActual.correcta) {
+                feedbackDiv.innerHTML = '<span class="correct">¡Bien! +1 ✅</span>';
+                puntuacion++;
+                speak('¡Excelente! Correcto.'); 
+                nextBtn.style.display = 'inline';
+                
+                buttonElement.classList.add('correct-choice');
+
+            } else {
+                feedbackDiv.innerHTML = '<span class="incorrect">Vuelve a intentarlo ❌</span>';
+                speak('Respuesta incorrecta. Vuelve a intentarlo.');
+                
+                buttonElement.classList.add('shake');
+                setTimeout(() => buttonElement.classList.remove('shake', 'correct-choice'), 500);
+            }
+        }
+
+        function nextLevel() { 
+            currentLevel++; 
+            loadLevel(); 
+        }
+
+        // --- RESULTADOS Y FIN DE JUEGO ---
+
+        function launchConfetti() {
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = ''; 
+            const colors = ['#32ff6e', '#00e0ff', '#ffdd33', '#ff3232', '#e0e0e0']; 
+
+            for (let i = 0; i < 50; i++) {
+                const c = document.createElement('div');
+                c.classList.add('confetti');
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                c.style.setProperty('--x-start', (Math.random() * 100) + 'vw');
+                c.style.setProperty('--x-end', (Math.random() * 100) + 'vw');
+                c.style.setProperty('--delay', (Math.random() * 1) + 's');
+                c.style.setProperty('--duration', (2 + Math.random() * 3) + 's');
+                container.appendChild(c);
+            }
+            setTimeout(() => { container.innerHTML = ''; }, 5000); 
+        }
+
+        function showResults() {
+            stopBGM(); 
+            const mensajeFinal = puntuacion === totalNiveles 
+                ? "¡Impresionante! Completaste todos los ejercicios con éxito. Tu terapia avanza muy bien. 🎉"
+                : "¡Muy buen esfuerzo! Tuviste éxito en la mayoría de los niveles. Sigue practicando para mejorar.";
+                
+            document.getElementById('finalScore').textContent = `Puntuación: ${puntuacion}/${totalNiveles}.`;
+            document.getElementById('finalMessage').textContent = mensajeFinal;
+            
+            if (puntuacion === totalNiveles) {
+                launchConfetti();
+                speak(`¡Felicidades! Lograste un puntaje perfecto de ${puntuacion} de ${totalNiveles}.`);
+            } else {
+                speak(`Juego finalizado. Obtuviste ${puntuacion} de ${totalNiveles} puntos.`);
+            }
+
+            showScreen('resultados');
+        }
+
+        function resetGame() { 
+            currentLevel = 0; 
+            puntuacion = 0; 
+            instruccionesMostradas = false;
+        }
+
+    </script>
+</body>
+</html>
